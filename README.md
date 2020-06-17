@@ -11,3 +11,5 @@ The following pipeline was designed to enable CI/CD in a kubernetes cluster, usi
 
 The designed and implemented topology is:
 
+[alt text](https://github.com/alexismaior/cicd/blob/master/pipeline.png)
+
