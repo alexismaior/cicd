@@ -10,7 +10,7 @@
   In my organization, every commit (and push) to master branch is considered a "good to go" build. The validation process with the client is done either in the feature branch, before the merge with master, or in production, leveraging toggle features, which can be enabled only in staging environment. The devops lemma in our team is: "The faster we fail, the faster we fix it".
 
   basic process of TBD process and pipeline is:
-  ![Alt text](https://github.com/alexismaior/cicd/blob/master/tbd-process?raw=true "TBD")
+  ![Alt text](https://github.com/alexismaior/cicd/blob/master/tbd-process-v0?raw=true "TBD")
 
 # CI/CD - continuous integration and deployment pipeline topology
 
