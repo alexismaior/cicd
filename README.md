@@ -1,3 +1,9 @@
+# A CI/CD pipeline project for a Trunk-Based Development strategy in a Kubernetes environment
+
+   The main purpose of this project is to describe and deploy a pipeline for Continuous Integraton and Continuous Deployment of a Trunk-Based Development Strategy in a Kubernetes environment, leveraging opensource tools in order to foster automation, control and agility.
+
+# The Trunk-Based Development (TBD) Strategy
+  Many organizations are now working with (or migrating to) TBD. 
 # CI/CD - continuous integration and deployment pipeline topology
 
 The following pipeline was designed to enable CI/CD in a kubernetes cluster, using:
