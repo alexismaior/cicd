@@ -9,8 +9,15 @@
 
   In my organization, every commit (and push) to master branch is considered a "good to go" build. The validation process with the client is done either in the feature branch, before the merge with master, or in production, leveraging toggle features, which can be enabled only in staging environment. The devops lemma in our team is: "The faster we fail, the faster we fix it".
 
-  basic process of TBD process and pipeline is:
-  ![Alt text](https://github.com/alexismaior/cicd/blob/master/tbd-process-v0?raw=true "TBD")
+  The basic process below outlines the actual TBD pipeline:
+  ![Alt text](https://github.com/alexismaior/cicd/blob/master/tbd-process-v1.png?raw=true "TBD")
+
+  It's in discussion an improvement of this process, where the Release Manager role will be responsible for tagging the release whenever it is ready for staging and production stages. This will move the "authorization" fase one step earlier. It is also under the radar automation between the dev Workflow Management tool and git tool, enabling auto tagging when the ticket (or user story) was validated by the release manager.
+
+  In this scenario, the TBD pipeline would be something like this:
+  ![Alt text](https://github.com/alexismaior/cicd/blob/master/tbd-process-v2.png?raw=true "TBD new")
+
+  For this project, the first TBD will be considered for CICD implementation. 
 
 # CI/CD - continuous integration and deployment pipeline topology
 
