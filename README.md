@@ -33,6 +33,7 @@ This is our chosen fleet:
 - Gitea - https://gitea.io/ - git based service for code hosting. It is a great option for self-hosting a git service on premise.
 - helm - https://helm.sh/ - tamplating and packaging for kubernetes objects. With helm, it is possible to manage the creation and deployment of all kubernetes declarative files (deployment.yaml, service.yaml, ingress.yaml, etc) by templating them. In this project, we defined only one template for all repos. This has enabled centralized configuration with simplified management. The trade off are more complex templates.
 - kubernetes - https://kubernetes.io - Container orchestration infrastructure. The foundation platform for our container-based projects.
+- Rancher - https://rancher.com/ - Rancher is a powerful stack capable of managing hundreds of kubernetes clusters, providing an API, a friendly UI and integrating many tools for cluster administration. 
 - VMWare - https://vmware.com - Private cloud infrastructure.
 
 # The pipeline
