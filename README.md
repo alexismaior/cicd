@@ -42,11 +42,12 @@ This is our chosen fleet:
 
 ![Alt text](https://github.com/alexismaior/cicd/blob/master/pipeline-v0.png?raw=true "Pipeline")
 
-  First, let's consider a commit in the master branch and a push to Gitea for a random repo.
+  First, let's consider a commit in the master branch and a push to Gitea for a random repo. That is the default path for production.
 
 - Gitea is configured to send webhooks to Drone to activate the pipeline process. This configuration is easy an can be done by creating an OAuth Applicaton in Gitea (https://docs.drone.io/server/provider/gitea/). By default, Gitea will send webhook events for branch or tag creation, pull requests and pushes. But this can be also configured.
 - Push: Drone server will receive this event and will call drone-config service (another container from a boiler plate project) to retrieve the proper centralized drone.yaml file, which is also versioned in a git repo. It is possible to write a logic for this step, in case you have different pipelines for different repos.
 - Drone server will then pass this drone.yaml to drone agent, the third "Drone suite" component. Drone agent is responsible to parse this yaml file and call the plugins. Plugins in drone are nothing more than docker containers running specific images to execute the step. There are many available in http://plugins.drone.io/. The first (and default) step for drone is to clone the target repo into a workspace. This workspace is a docker temporary volume that is mounted on each container for each step. This is quite useful to pass information for one step to another. Drone will then execute the following steps.
+
 ![Alt text](https://github.com/alexismaior/cicd/blob/master/drone-master-v1.png?raw=true "Drone-master")
 
 - Unit Test: Drone will then execute the unit tests defined in the repo.
@@ -56,5 +57,29 @@ This is our chosen fleet:
 - Deploy Test Environments: In this step, drone invokes the drone-helm3 plugin to deploy the helm chart on each environment. This plugin can be configured to set values during the deploy. This is quite useful for setting specific URLs for ingress according to the environment.
 - Deploy Staging and Production: Despite the name, drone will only configure the Argo application to sync the new helm chart. Argo will be the one to actually deploy and enforce configuration on staging and production kubernetes environments. What drone does is check if the Argo application exists (in case of a new repo) and create it otherwise. It sets some helm values just like the last step and sets staging deployment as auto-sync and production as manual sync.
 - Authorization: This is not a drone step. The authorization occurs when the Release Manager approve the deployment in production and manually sync all "out-of-syn" repos in Argocd.
+
 ![Alt text](https://github.com/alexismaior/cicd/blob/master/argocd.png?raw=true "ArgoCD")
   In Argo, it is possible not only to sync specific kubernetes objects but also check the history of all deployments and execute rollbacks for previously working releases.
+
+  Now, let's describe the feature-branch pipeline. It will also start in Gitea, but now triggered by a push in non-master branch.
+
+  - Push: It is possible to configure conditions in drone pipelines. In our case, whenever the commit is on a non-master branch, the alternative pipeline will be executed. This means that we don't need to specify another drone.yaml. Rather, we can reuse common steps and execute others when the branch condition is satisfied.
+
+![Alt text](https://github.com/alexismaior/cicd/blob/master/drone-feature.png?raw=true "Drone-feature")
+
+  - Unit Test, build, push, sec test and helm: Nothing especial here, except that images are now tagged with na name of the feature-branch instead of "master"(Ex: 5-mybranch-fedcba). This will also makes easier to find the production-to-be microservice among all others in the development cluster.
+  - Create k8s cluster: This is probably the most interesting step in hole pipeline. In order to test and validate the new feature we automatically create a temporary kubernetes cluster that will live until the feature branch exists. This will not only create a standalone and isolated environment for testing but also curb unnecessary resources consumption (specially in public cloud pay-as-you go model). For this automation, drone will call the ansible plugin to execute this step. This ansible playbook can be quite extensive, and can be found in https://github.com/alexismaior-ansible/play-create-rancher-cluster-per-branch. The overall steps executed by this playbook are:
+    - Check if there are available VMs in VMWare vCenter. As we are in a private cloud environment and we don't want to wait long time for the VM provisioning, the VMs were already created and its "availability" controlled by tag. If the VM has the "available" tag, it can be used in our new cluster. This playbook can be easily adapted do dynamically create and delete a VM on the fly.
+    - Install prerequisites, such as docker, helm and kubectl.
+    - Create a kubernetes cluster in Rancher. For this we use an ansible role designed for communicating with Rancher API (alexismaior.ansible_role_manage_rancher_cluster).
+    - Add the VMs to this new cluster, using the same ansible role.
+    - Create and set a VMWare tag to VMs. Now they are formally assigning to the cluster and won't be available for other feature-branch clusters.
+    - Register DNS entries.
+    - Clone staging environment. For testing purposes it is critical to have an environment close to production. Therefore, we run a shell script (https://github.com/alexismaior/kubernetes/blob/master/scripts/kubeconfig-devtest.yaml) that deploy all helm charts available in staging on the new cluster.
+    - Communicate in the Telegram group that the new k8s cluster is available, application set and its URL.
+  - Deploy Feature in dev: Back to drone.io, here we call the drone-helm3 plugin to do the job and deploy the new feature helm chart on the new cluster.
+  - Delete k8s Cluster: As said, drone cannot yet be triggered by branch deletion, therefore we have chosen to rely on jenkins to execute the cluster deletion playbook. Jenkins receives a webhook from gitea whenever a branch is deleated and pass its name to ansible playbook. Obs: Automatically deletion of a cluster can be dangerous for obvious reasons (Imagine someone creating a "production" feature branch). Well, besides creating clusters with "dev" prefix, we also guarantee that the service user that executes this action in Rancher does not have enough rights in prod.
+
+  # Conclusion
+
+    This project has incredibly enhanced our control and observability in the deployment process. Many other tools, such as fluentd, elastic search, kibana, prometheus and grafana are also being used for logging and reporting purposes. Rancher also provides great features for kubernetes cluster management and security auditing and controls. Much more must be done, but the overall result has shown us that leveraging automation is the key for greater productivity with managed risks.
