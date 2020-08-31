@@ -56,5 +56,5 @@ This is our chosen fleet:
 - Deploy Test Environments: In this step, drone invokes the drone-helm3 plugin to deploy the helm chart on each environment. This plugin can be configured to set values during the deploy. This is quite useful for setting specific URLs for ingress according to the environment.
 - Deploy Staging and Production: Despite the name, drone will only configure the Argo application to sync the new helm chart. Argo will be the one to actually deploy and enforce configuration on staging and production kubernetes environments. What drone does is check if the Argo application exists (in case of a new repo) and create it otherwise. It sets some helm values just like the last step and sets staging deployment as auto-sync and production as manual sync.
 - Authorization: This is not a drone step. The authorization occurs when the Release Manager approve the deployment in production and manually sync all "out-of-syn" repos in Argocd.
-![Alt text](https://github.com/alexismaior/cicd/blob/master/drone-master-v1.png?raw=true "ArgoCD")
+![Alt text](https://github.com/alexismaior/cicd/blob/master/argocd.png?raw=true "ArgoCD")
   In Argo, it is possible not only to sync specific kubernetes objects but also check the history of all deployments and execute rollbacks for previously working releases.
