@@ -33,7 +33,7 @@ This is our chosen fleet:
 - Gitea - https://gitea.io/ - git based service for code hosting. It is a great option for self-hosting a git service on premise.
 - helm - https://helm.sh/ - tamplating and packaging for kubernetes objects. With helm, it is possible to manage the creation and deployment of all kubernetes declarative files (deployment.yaml, service.yaml, ingress.yaml, etc) by templating them. In this project, we defined only one template for all repos. This has enabled centralized configuration with simplified management. The trade off are more complex templates.
 - kubernetes - https://kubernetes.io - Container orchestration infrastructure. The foundation platform for our container-based projects.
-- Rancher - https://rancher.com/ - Rancher is a powerful stack capable of managing hundreds of kubernetes clusters, providing an API, a friendly UI and integrating many tools for cluster administration. 
+- Rancher - https://rancher.com/ - Rancher is a powerful stack capable of managing hundreds of kubernetes clusters, providing an API, a friendly UI and integrating many tools for cluster administration.
 - VMWare - https://vmware.com - Private cloud infrastructure.
 
 # The pipeline
@@ -83,4 +83,4 @@ This is our chosen fleet:
 
   # Conclusion
 
-    This project has incredibly enhanced our control and observability in the deployment process. Many other tools, such as fluentd, elastic search, kibana, prometheus and grafana are also being used for logging and reporting purposes. Rancher also provides great features for kubernetes cluster management and security auditing and controls. Much more must be done, but the overall result has shown us that leveraging automation is the key for greater productivity with managed risks.
+This project has incredibly enhanced our control and observability in the deployment process. Many other tools, such as fluentd, elastic search, kibana, prometheus and grafana are also being used for logging and reporting purposes. Rancher also provides great features for kubernetes cluster management and security auditing and controls. Much more must be done, but the overall result has shown us that leveraging automation is the key for greater productivity with managed risks.
